@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.admin.views.decorators import staff_member_required
 from .models import Vehicle
 from .forms import VehicleForm
 # Create your views here.
@@ -7,6 +8,7 @@ from .forms import VehicleForm
 def index(request):
     return HttpResponse("Bienvenue sur la gestion des véhicules de CarLend!")
 
+@staff_member_required
 def vehicle_list(request):
     vehicles = Vehicle.objects.all()
     return render(request, 'vehicles/vehicle_list.html', {'vehicles': vehicles})

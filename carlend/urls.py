@@ -20,6 +20,10 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from home.views import home
 
+from django.conf import settings
+from django.conf.urls.static import static
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('vehicles/', include('vehicles.urls')),  # Inclure les URLs de l'application
@@ -27,4 +31,9 @@ urlpatterns = [
     path('home/', include('home.urls')),  # Page d'accueil
     path('', home, name='home'),  # Associer l'URL racine à la vue d'accueil
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # Ajout de l'URL de connexion
+    path('parc/', include('parc.urls')),  # Ajout de l'application Parc
+    path('historiques/', include('historiques.urls')),
 ]
+# Ajoutez ceci pour inclure les fichiers médias en mode développement
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

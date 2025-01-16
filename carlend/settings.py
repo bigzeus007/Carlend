@@ -12,9 +12,16 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+import os
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -40,7 +47,9 @@ INSTALLED_APPS = [
     # Applications personnalisées
     'vehicles',
     'reservations',
+    'historiques',
     'home',
+    'parc',
 ]
 
 MIDDLEWARE = [
@@ -58,8 +67,8 @@ ROOT_URLCONF = "carlend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [BASE_DIR / "templates"],  # Ajoutez cette ligne
-        "APP_DIRS": True,
+        'DIRS': [BASE_DIR / "templates"],  # Répertoire global pour les templates
+        "APP_DIRS": True,  # Activer le chargement dans les répertoires des apps
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
