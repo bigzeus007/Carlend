@@ -6,3 +6,4 @@ tzdata==2024.2
 gunicorn
 whitenoise
 pillow
+dj-database-url

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
 
 import os
 
@@ -28,6 +29,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-mqifqs0m896%j_i-%rh^*uzb@j15hb1^ai09vlvayvx=_b&yx5"
+DATABASE_URL = "postgresql://postgres:HbsatcAhaSUtHTNBgMdWMaZVoTmBzhpO@junction.proxy.rlwy.net:57638/railway"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -88,19 +90,7 @@ WSGI_APPLICATION = "carlend.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        #"ENGINE": "django.db.backends.sqlite3",
-        #"NAME": BASE_DIR / "db.sqlite3",
-        'ENGINE': 'django.db.backends.postgresql',
-        "NAME": "railway",
-        "USER": "postgres",
-        "PASSWORD":"bHTJFQfiYyobjUWKwPWltZENCTFNhhYa",
-        "HOST":"viaduct.proxy.rlwy.net",
-        "PORT":"5432",
-        'OPTIONS': {
-            'sslmode': 'disable',
-        },
-    }
+    "default": dj_database_url.config(default=os.getenv("DATABASE_URL")),
 }
 
 
