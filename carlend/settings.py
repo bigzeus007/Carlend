@@ -39,9 +39,9 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 # Allowed hosts
 #ALLOWED_HOSTS = []
 #ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'carlend-production.up.railway.app']
 
-
+CSRF_TRUSTED_ORIGINS = ['https://carlend-production.up.railway.app']
 # Application definition
 
 INSTALLED_APPS = [
@@ -98,8 +98,8 @@ WSGI_APPLICATION = "carlend.wsgi.application"
 os.environ.setdefault("PGDATABASE", "railway")
 os.environ.setdefault("PGUSER", "postgres")
 os.environ.setdefault("PGPASSWORD", "crHkhupWbWzyNZvEtsAfejhkPbHwxOhY")
-os.environ.setdefault("PGHOST", "postgres.railway.internal")
-os.environ.setdefault("PGPORT", "5432") #5432
+os.environ.setdefault("PGHOST", "roundhouse.proxy.rlwy.net")
+os.environ.setdefault("PGPORT", "22478")
 
 DATABASES = {
     'default': {
