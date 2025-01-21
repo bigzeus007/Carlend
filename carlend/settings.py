@@ -38,7 +38,8 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 
 # Allowed hosts
 #ALLOWED_HOSTS = []
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+#ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -93,13 +94,23 @@ WSGI_APPLICATION = "carlend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Set default values for the environment variables if they’re not already set
+os.environ.setdefault("PGDATABASE", "railway")
+os.environ.setdefault("PGUSER", "postgres")
+os.environ.setdefault("PGPASSWORD", "HbsatcAhaSUtHTNBgMdWMaZVoTmBzhpO")
+os.environ.setdefault("PGHOST", "junction.proxy.rlwy.net")
+os.environ.setdefault("PGPORT", "5432")
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL", "postgres://postgres:HbsatcAhaSUtHTNBgMdWMaZVoTmBzhpO@junction.proxy.rlwy.net:57638/railway")
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ["PGDATABASE"],
+        'USER': os.environ["PGUSER"],
+        'PASSWORD': os.environ["PGPASSWORD"],
+        'HOST': os.environ["PGHOST"],
+        'PORT': os.environ["PGPORT"],
+    }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -136,6 +147,19 @@ USE_TZ = True
 
 #STATIC_URL = "static/"
 #STATICFILES_DIRS = [BASE_DIR / "static"]
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+    },
+}
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Assurez-vous que ce répertoire existe
