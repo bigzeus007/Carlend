@@ -97,8 +97,8 @@ WSGI_APPLICATION = "carlend.wsgi.application"
 # Set default values for the environment variables if they’re not already set
 os.environ.setdefault("PGDATABASE", "railway")
 os.environ.setdefault("PGUSER", "postgres")
-os.environ.setdefault("PGPASSWORD", "HbsatcAhaSUtHTNBgMdWMaZVoTmBzhpO")
-os.environ.setdefault("PGHOST", "junction.proxy.rlwy.net")
+os.environ.setdefault("PGPASSWORD", "bHTJFQfiYyobjUWKwPWltZENCTFNhhYa")
+os.environ.setdefault("PGHOST", "viaduct.proxy.rlwy.net")
 os.environ.setdefault("PGPORT", "5432")
 
 DATABASES = {
