@@ -94,7 +94,9 @@ WSGI_APPLICATION = "carlend.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.config(conn_max_age=600, ssl_require=True)
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL", "postgres://postgres:HbsatcAhaSUtHTNBgMdWMaZVoTmBzhpO@junction.proxy.rlwy.net:57638/railway")
+    )
 }
 
 

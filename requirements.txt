@@ -7,3 +7,4 @@ gunicorn
 whitenoise
 pillow
 dj-database-url
+python-decouple
