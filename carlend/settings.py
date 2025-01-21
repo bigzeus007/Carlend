@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 import dj_database_url
 
-import os
+
 
 
 
@@ -28,13 +29,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-mqifqs0m896%j_i-%rh^*uzb@j15hb1^ai09vlvayvx=_b&yx5"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "default-unsafe-secret-key")
 #DATABASE_URL = "postgresql://postgres:HbsatcAhaSUtHTNBgMdWMaZVoTmBzhpO@junction.proxy.rlwy.net:57638/railway"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
+# Allowed hosts
+#ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
 # Application definition
@@ -77,7 +81,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'django.template.context_processors.static',
+                #'django.template.context_processors.static',
             ],
         },
     },
@@ -90,7 +94,11 @@ WSGI_APPLICATION = "carlend.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.config(default=os.getenv("DATABASE_URL","postgresql://postgres:HbsatcAhaSUtHTNBgMdWMaZVoTmBzhpO@postgres.railway.internal:5432/railway")),
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 
@@ -138,6 +146,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Assurez-vous que ce ré
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+#DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
