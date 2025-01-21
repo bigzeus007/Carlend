@@ -42,6 +42,7 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'carlend-production.up.railway.app']
 
 CSRF_TRUSTED_ORIGINS = ['https://carlend-production.up.railway.app']
+CONN_MAX_AGE = 60  # Gardez les connexions ouvertes plus longtemps pour réduire les coûts.
 # Application definition
 
 INSTALLED_APPS = [
