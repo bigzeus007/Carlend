@@ -17,10 +17,6 @@ def add_reservation(request):
         if form.is_valid():
             reservation = form.save(commit=False)
             reservation.user = request.user  # Associer l'utilisateur connecté
-            reservation.driving_license_front = request.FILES.get('driving_license_front')
-            reservation.driving_license_back = request.FILES.get('driving_license_back')
-            reservation.id_card_front = request.FILES.get('id_card_front')
-            reservation.id_card_back = request.FILES.get('id_card_back')
             reservation.save()
             return redirect('reservation_list')
     else:
@@ -34,20 +30,12 @@ def edit_reservation(request, pk):
         form = ReservationForm(request.POST, request.FILES, instance=reservation)  # Inclure request.FILES
         if form.is_valid():
             # Vérifiez si de nouveaux fichiers ont été soumis
-            if 'driving_license_front' in request.FILES:
-                reservation.driving_license_front = request.FILES['driving_license_front']
-            if 'driving_license_back' in request.FILES:
-                reservation.driving_license_back = request.FILES['driving_license_back']
-            if 'id_card_front' in request.FILES:
-                reservation.id_card_front = request.FILES['id_card_front']
-            if 'id_card_back' in request.FILES:
-                reservation.id_card_back = request.FILES['id_card_back']
-
-            reservation.save()  # Sauvegarder les modifications
+            
+            form.save()
             return redirect('reservation_list')
     else:
         form = ReservationForm(instance=reservation)
-    return render(request, 'reservations/edit_reservation.html', {'form': form, 'reservation': reservation})
+    return render(request, 'reservations/edit_reservation.html', {'form': form})
 
 # Affecter un véhicule
 def assign_vehicle(request, pk):

@@ -30,7 +30,7 @@ ENVIRONMENT =env('ENVIRONMENT', default='production')
 
 
 
-MEDIA_URL = '/media/'
+#MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
@@ -110,13 +110,25 @@ WSGI_APPLICATION = "carlend.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # Set default values for the environment variables if they’re not already set
-os.environ.setdefault("PGDATABASE", "railway")
+'''os.environ.setdefault("PGDATABASE", "railway")
 os.environ.setdefault("PGUSER", "postgres")
 os.environ.setdefault("PGPASSWORD", "crHkhupWbWzyNZvEtsAfejhkPbHwxOhY")
 os.environ.setdefault("PGHOST", "roundhouse.proxy.rlwy.net")
 os.environ.setdefault("PGPORT", "22478")
+'''
+# Configuration pour Cloudinary
+INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
 
-"""DATABASES = {
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY = {
+    'cloud_name': env('CLOUD_NAME'),
+    'api_key': env('API_KEY'),
+    'api_secret': env('API_SECRET'),
+}
+
+MEDIA_URL = 'https://res.cloudinary.com/{}/'.format(env('CLOUD_NAME'))
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': "railway",
@@ -125,22 +137,7 @@ os.environ.setdefault("PGPORT", "22478")
 }
 POSTGRES_LOCALLY = True
 if ENVIRONMENT == 'production' or POSTGRES_LOCALLY is True:
-    DATABASES["default"]= dj_database_url.parse(env('DATABASE_URL'))"""
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('PGDATABASE', default='railway'),
-        'USER': env('PGUSER', default='postgres'),
-        'PASSWORD': env('PGPASSWORD', default='password'),
-        'HOST': env('PGHOST', default='localhost'),
-        'PORT': env('PGPORT', default='5432'),
-    }
-}
-
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
-
+    DATABASES["default"]= dj_database_url.parse(env('DATABASE_URL'))
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

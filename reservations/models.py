@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 from vehicles.models import Vehicle  # Assurez-vous que l'application vehicles existe
 from django.contrib.auth.models import User
 
@@ -19,10 +20,10 @@ class Reservation(models.Model):
     start_date = models.DateField(null=True, blank=True)  # Date de sortie du véhicule
     end_date = models.DateField(null=True, blank=True)  # Date de retour du véhicule
     deleted = models.BooleanField(default=False)  # Gestion logique de la suppression
-    driving_license_front = models.FileField(upload_to='documents/driving_license/front/', null=True, blank=True)
-    driving_license_back = models.FileField(upload_to='documents/driving_license/back/', null=True, blank=True)
-    id_card_front = models.FileField(upload_to='documents/id_card/front/', null=True, blank=True)
-    id_card_back = models.FileField(upload_to='documents/id_card/back/', null=True, blank=True)
+    driving_license_front = CloudinaryField('image', null=True, blank=True)
+    driving_license_back = CloudinaryField('image', null=True, blank=True)
+    id_card_front = CloudinaryField('image', null=True, blank=True)
+    id_card_back = CloudinaryField('image', null=True, blank=True)
 
     def __str__(self):
         return f"{self.client_name} - {self.reservation_date}"
