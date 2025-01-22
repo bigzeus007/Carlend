@@ -9,17 +9,25 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from environ import Env
 from pathlib import Path
 import os
 import dj_database_url
+
+
+env = Env()
+BASE_DIR = Path(__file__).resolve().parent.parent
+# reading .env file
+Env.read_env(os.path.join(BASE_DIR, ".env"))
+ENVIRONMENT =env('ENVIRONMENT', default='production')
+
 
 
 
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 MEDIA_URL = '/media/'
@@ -34,7 +42,13 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "default-unsafe-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = True
-DEBUG = os.getenv("DEBUG", "True") == "True"
+#DEBUG = os.getenv("DEBUG", "True") == "True"
+
+if ENVIRONMENT == 'development':
+    DEBUG=True
+else:
+    DEBUG=False
+
 
 # Allowed hosts
 #ALLOWED_HOSTS = []
@@ -102,16 +116,31 @@ os.environ.setdefault("PGPASSWORD", "crHkhupWbWzyNZvEtsAfejhkPbHwxOhY")
 os.environ.setdefault("PGHOST", "roundhouse.proxy.rlwy.net")
 os.environ.setdefault("PGPORT", "22478")
 
+"""DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': "railway",
+        
+    }
+}
+POSTGRES_LOCALLY = True
+if ENVIRONMENT == 'production' or POSTGRES_LOCALLY is True:
+    DATABASES["default"]= dj_database_url.parse(env('DATABASE_URL'))"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
+        'NAME': env('PGDATABASE', default='railway'),
+        'USER': env('PGUSER', default='postgres'),
+        'PASSWORD': env('PGPASSWORD', default='password'),
+        'HOST': env('PGHOST', default='localhost'),
+        'PORT': env('PGPORT', default='5432'),
     }
 }
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
