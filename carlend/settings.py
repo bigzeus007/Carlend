@@ -55,7 +55,10 @@ else:
 #ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'carlend-production.up.railway.app']
 
-CSRF_TRUSTED_ORIGINS = ['https://carlend-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = [
+    'https://carlend-production.up.railway.app',
+    'http://127.0.0.1:8000',
+]
 CONN_MAX_AGE = 60  # Gardez les connexions ouvertes plus longtemps pour réduire les coûts.
 # Application definition
 
@@ -133,12 +136,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': "railway",
-        
     }
+    
 }
 POSTGRES_LOCALLY = True
 if ENVIRONMENT == 'production' or POSTGRES_LOCALLY is True:
-    DATABASES["default"]= dj_database_url.parse(env('DATABASE_URL'))
+    DATABASES["default"]= dj_database_url.parse(env('DATABASE_URL'),conn_max_age=600,ssl_require=True)
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
