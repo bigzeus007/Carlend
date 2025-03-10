@@ -178,6 +178,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+SESSION_COOKIE_AGE = 3600  # 1 heure avant expiration
+SESSION_SAVE_EVERY_REQUEST = True  # Rafraîchir la session à chaque requête
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

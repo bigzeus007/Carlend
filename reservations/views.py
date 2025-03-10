@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Reservation
 from .forms import ReservationForm
 from vehicles.models import Vehicle
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.http import HttpResponseForbidden
 
 # Liste des réservations
 def reservation_list(request):
@@ -85,8 +86,14 @@ def archive_reservation(request, pk):
     return redirect('reservation_list')
 
 @login_required
-@user_passes_test(is_validator)  # Seuls les validateurs peuvent accéder
+@permission_required('reservations.can_validate_reservation', raise_exception=True)
 def validate_reservation(request, pk):
+    print(f"Utilisateur actuel: {request.user}")  # Vérifie qui est connecté
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("Vous devez être connecté pour valider une réservation.")
+
+    if not request.user.has_perm('reservations.can_validate_reservation'):
+        return HttpResponseForbidden("Vous n'avez pas la permission de valider cette réservation.")
     reservation = get_object_or_404(Reservation, pk=pk)
 
     if request.method == 'POST':
