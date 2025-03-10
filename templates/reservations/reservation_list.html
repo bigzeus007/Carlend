@@ -3,46 +3,51 @@
 <a href="{% url 'add_reservation' %}" class="btn btn-primary mb-3"
   >Ajouter une Réservation</a
 >
-<table class="table table-bordered table-hover">
+<table class="table table-bordered table-hover mt-4">
   <thead class="table-primary">
-    <tr>
-      <th>#</th>
-      <th>Demandeur</th>
-      <th>Nom Client</th>
-      <th>Criticité</th>
-      <th>Date de Réservation</th>
-      <th>Durée</th>
-      <th>Actions</th>
-    </tr>
+      <tr>
+          <th>#</th>
+          <th>Demandeur</th>
+          <th>Nom Client</th>
+          <th>Criticité</th>
+          <th>Date de Réservation</th>
+          <th>Durée</th>
+          <th>Statut</th>
+          <th>Actions</th>
+      </tr>
   </thead>
   <tbody>
-    {% for reservation in reservations %}
-    <tr>
-      <td>{{ forloop.counter }}</td>
-      <td>{{ reservation.user.email }}</td>
-      <!-- Affiche l'email de l'utilisateur -->
-      <td>{{ reservation.client_name }}</td>
-      <td>{{ reservation.get_criticality_display }}</td>
-      <td>{{ reservation.reservation_date }}</td>
-      <td>{{ reservation.reservation_duration }} jours</td>
-      <td>
-        <a
-          href="{% url 'edit_reservation' reservation.pk %}"
-          class="btn btn-warning btn-sm"
-          >Modifier</a
-        >
-        <a
-          href="{% url 'assign_vehicle' reservation.pk %}"
-          class="btn btn-success btn-sm"
-          >Assigner Véhicule</a
-        >
-      </td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="7" class="text-center">Aucune réservation disponible</td>
-    </tr>
-    {% endfor %}
+      {% for reservation in reservations %}
+      <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ reservation.user.username }}</td>
+          <td>{{ reservation.client_name }}</td>
+          <td>{{ reservation.get_criticality_display }}</td>
+          <td>{{ reservation.reservation_date }}</td>
+          <td>{{ reservation.reservation_duration }} jours</td>
+          <td>{{ reservation.get_status_validation_display }}</td>
+          <td>
+              {% if reservation.status_validation == 'pending' %}
+                  <form method="post" action="{% url 'validate_reservation' reservation.id %}">
+                      {% csrf_token %}
+                      <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">✅ Valider</button>
+                      <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">❌ Rejeter</button>
+                  </form>
+              {% elif reservation.status_validation == 'approved' %}
+                  <a href="{% url 'assign_vehicle' reservation.id %}" class="btn btn-primary btn-sm">🚗 Assigner un véhicule</a>
+              {% elif reservation.status_validation == 'rejected' %}
+                  <form method="post" action="{% url 'archive_reservation' reservation.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-warning btn-sm">📂 Archiver</button>
+                  </form>
+              {% endif %}
+          </td>
+      </tr>
+      {% empty %}
+      <tr>
+          <td colspan="8" class="text-center">Aucune réservation disponible</td>
+      </tr>
+      {% endfor %}
   </tbody>
 </table>
 {% endblock %}

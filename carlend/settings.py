@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'historiques',
     'home',
     'parc',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -130,12 +131,15 @@ CLOUDINARY = {
     'api_key': env('API_KEY'),
     'api_secret': env('API_SECRET'),
 }
+CLOUDINARY_ALLOWED_FORMATS = ['pdf', 'doc', 'docx', 'jpg', 'png']
 
 MEDIA_URL = 'https://res.cloudinary.com/{}/'.format(env('CLOUD_NAME'))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': "railway",
+        'CONN_MAX_AGE': 600,
+        'OPTIONS': {'sslmode': 'require'}
     }
     
 }
@@ -144,6 +148,8 @@ if ENVIRONMENT == 'production' or POSTGRES_LOCALLY is True:
     DATABASES["default"]= dj_database_url.parse(env('DATABASE_URL'),conn_max_age=600,ssl_require=True)
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = 'users.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

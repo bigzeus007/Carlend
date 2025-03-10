@@ -1,10 +1,15 @@
 from django.db import models
 from cloudinary.models import CloudinaryField
-from vehicles.models import Vehicle  # Assurez-vous que l'application vehicles existe
-from django.contrib.auth.models import User
+from vehicles.models import Vehicle  
+from django.conf import settings
 
 class Reservation(models.Model):
-    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, related_name='reservations')
+    STATUS_CHOICES = [
+        ('pending', 'En attente de validation'),
+        ('approved', 'Validée'),
+        ('rejected', 'Rejetée'),
+    ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE, related_name='reservations')
     client_name = models.CharField(max_length=100,verbose_name="Nom Client")
     client_license_plate = models.CharField(max_length=20,verbose_name="Plaque")
     client_vehicle_date = models.DateField(verbose_name="Mise en circulation")
@@ -16,14 +21,24 @@ class Reservation(models.Model):
     reasons = models.TextField()
     assigned_vehicle = models.ForeignKey(Vehicle, null=True, blank=True, on_delete=models.SET_NULL)
     is_assigned = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)  # Nouveau champ pour le statut de réservation
-    start_date = models.DateField(null=True, blank=True)  # Date de sortie du véhicule
-    end_date = models.DateField(null=True, blank=True)  # Date de retour du véhicule
-    deleted = models.BooleanField(default=False)  # Gestion logique de la suppression
+    is_active = models.BooleanField(default=True)  
+    start_date = models.DateField(null=True, blank=True)  
+    end_date = models.DateField(null=True, blank=True)  
+    deleted = models.BooleanField(default=False)  
     driving_license_front = CloudinaryField('image', null=True, blank=True)
     driving_license_back = CloudinaryField('image', null=True, blank=True)
     id_card_front = CloudinaryField('image', null=True, blank=True)
     id_card_back = CloudinaryField('image', null=True, blank=True)
+    status_validation = models.CharField(
+        max_length=10, 
+        choices=STATUS_CHOICES, 
+        default='pending', 
+        verbose_name="Statut de validation"
+    )
+    class Meta:
+        permissions = [
+            ("can_validate_reservation", "Peut valider les réservations"),
+        ]
 
     def __str__(self):
-        return f"{self.client_name} - {self.reservation_date}"
+        return f"{self.client_name} - {self.reservation_date} ({self.get_status_validation_display()})"

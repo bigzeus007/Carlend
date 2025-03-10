@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Reservation
 from .forms import ReservationForm
 from vehicles.models import Vehicle
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
 
 # Liste des réservations
 def reservation_list(request):
@@ -64,3 +65,39 @@ def reservation_history(request):
     return render(request, 'reservations/reservation_history.html', {
         'reservations': reservations,
     })
+
+# Vérification que l'utilisateur est un validateur
+def is_validator(user):
+    return user.groups.filter(name='Validateur').exists()
+
+@login_required
+def archive_reservation(request, pk):
+    reservation = get_object_or_404(Reservation, pk=pk)
+
+    if reservation.status_validation != 'rejected':
+        messages.error(request, "Seules les réservations rejetées peuvent être archivées.")
+        return redirect('reservation_list')
+
+    reservation.deleted = True
+    reservation.is_active = False
+    reservation.save()
+    messages.success(request, "Réservation archivée avec succès.")
+    return redirect('reservation_list')
+
+@login_required
+@user_passes_test(is_validator)  # Seuls les validateurs peuvent accéder
+def validate_reservation(request, pk):
+    reservation = get_object_or_404(Reservation, pk=pk)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'approve':
+            reservation.status_validation = 'approved'
+            messages.success(request, "Réservation validée avec succès.")
+        elif action == 'reject':
+            reservation.status_validation = 'rejected'
+            messages.warning(request, "Réservation rejetée.")
+        reservation.save()
+        return redirect('reservation_list')
+
+    return render(request, 'reservations/validate_reservation.html', {'reservation': reservation})
