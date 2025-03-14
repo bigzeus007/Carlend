@@ -8,7 +8,7 @@ from django.http import HttpResponseForbidden
 
 # Liste des réservations
 def reservation_list(request):
-    reservations = Reservation.objects.filter(is_active=True, is_assigned=False)
+    reservations = Reservation.objects.filter(is_active=True, is_assigned=False, deleted=False)
     return render(request, 'reservations/reservation_list.html', {'reservations': reservations})
 
 # Ajouter une réservation

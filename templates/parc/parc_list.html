@@ -37,6 +37,7 @@
             class="btn btn-sm btn-warning"
             >Mettre à jour</a
           >
+          <a href="{% url 'generate_contract' vehicle.id %}" class="btn btn-success">Imprimer le Contrat</a>
           {% else %}
           <span>Aucune action</span>
           {% endif %}

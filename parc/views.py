@@ -4,6 +4,9 @@ from django.contrib import messages
 from reservations.models import Reservation
 from vehicles.models import Vehicle
 from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+import io
 
 
 def parc_list(request):
@@ -117,11 +120,21 @@ def parc_update(request, pk):
         elif action == "cancel_reservation":
             # Annuler la réservation
             cancellation_reason = request.POST.get('cancellation_reason')
-            vehicle.availability = "disponible"
-            vehicle.save()
+    
+            if reservation.assigned_vehicle:
+                reservation.assigned_vehicle.availability = "disponible"
+                reservation.assigned_vehicle.save()  # Libérer le véhicule
+
             reservation.deleted = True
-            reservation.reasons = f"Annulé : {cancellation_reason}"
+            reservation.is_assigned = False
+            reservation.is_active = False
+            reservation.assigned_vehicle = None  # Supprimer l'association du véhicule
+            reservation.reasons = f"Annulé : {cancellation_reason}" if cancellation_reason else "Annulé"
+            
             reservation.save()
+            # Nettoyer la session après annulation
+            request.session.pop('reservation_data', None)
+            
             messages.success(request, "Réservation annulée.")
             return redirect('parc_list')
 
@@ -187,3 +200,40 @@ def update_vehicle_status(request, pk):
     }
     return render(request, 'parc/update_vehicle.html', context)
 
+def generate_contract(request, pk):
+    # Récupérer la réservation associée au véhicule
+    reservation = get_object_or_404(Reservation, assigned_vehicle_id=pk, is_assigned=True)
+
+    # Créer un buffer en mémoire pour stocker le PDF
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+
+    # Contenu du contrat
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(200, 800, "CONTRAT DE PRÊT DE VÉHICULE")
+
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 760, "Super Auto Distribution (S.A.D)")
+    p.drawString(100, 740, "Lot 38 ZI VITA route de Casablanca, RABAT")
+
+    p.drawString(100, 700, f"Nom du client : {reservation.client_name}")
+    p.drawString(100, 680, f"Numéro CIN : ___________")  # Ajouter le champ CIN si disponible
+    p.drawString(100, 660, f"Modèle du véhicule : {reservation.assigned_vehicle.model}")
+    p.drawString(100, 640, f"Immatriculation : {reservation.client_license_plate}")
+
+    p.drawString(100, 620, f"Date de début : {reservation.start_date}")
+    p.drawString(100, 600, f"Date de retour prévue : {reservation.end_date}")
+
+    p.drawString(100, 550, "Le bénéficiaire s'engage à restituer le véhicule dans le même état.")
+    p.drawString(100, 530, "Toute détérioration sera à sa charge.")
+
+    p.drawString(100, 500, "Fait à Rabat, le __/__/____")
+    p.drawString(100, 470, "Signature du bénéficiaire : ____________________")
+    p.drawString(350, 470, "Signature de S.A.D : ____________________")
+
+    # Finaliser le PDF
+    p.showPage()
+    p.save()
+
+    buffer.seek(0)
+    return HttpResponse(buffer, content_type='application/pdf')
