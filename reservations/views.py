@@ -8,7 +8,7 @@ from django.http import HttpResponseForbidden
 
 # Liste des réservations
 def reservation_list(request):
-    reservations = Reservation.objects.filter(is_active=True, is_assigned=False, deleted=False)
+    reservations = Reservation.objects.filter(is_active=True, is_assigned=False, deleted=False).order_by('-created_at')
     return render(request, 'reservations/reservation_list.html', {'reservations': reservations})
 
 # Ajouter une réservation
@@ -39,6 +39,10 @@ def edit_reservation(request, pk):
         form = ReservationForm(instance=reservation)
     return render(request, 'reservations/edit_reservation.html', {'form': form})
 
+# Afficher les details d'une réservation
+def reservation_detail(request, pk):
+    reservation = get_object_or_404(Reservation, pk=pk)
+    return render(request, 'reservations/reservation_detail.html', {'reservation': reservation})
 # Affecter un véhicule
 def assign_vehicle(request, pk):
     reservation = get_object_or_404(Reservation, pk=pk)

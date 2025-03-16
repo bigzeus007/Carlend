@@ -29,6 +29,7 @@ class Reservation(models.Model):
     driving_license_back = CloudinaryField('image', null=True, blank=True)
     id_card_front = CloudinaryField('image', null=True, blank=True)
     id_card_back = CloudinaryField('image', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     status_validation = models.CharField(
         max_length=10, 
         choices=STATUS_CHOICES, 
