@@ -1,20 +1,15 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 
 class User(AbstractUser):
-    ROLE_CHOICES = [
-        ('admin', 'Administrateur'),
-        ('employee', 'Employé'),
-        ('validator', 'Validateur'),
-        ('pending', 'En attente')
-    ]
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='pending')
-
     def is_admin(self):
-        return self.role == 'admin'
+        return self.groups.filter(name='Admin').exists()
     
-    def is_employee(self):
-        return self.role == 'employee'
+    def is_conseiller(self):
+        return self.groups.filter(name='Conseillers de service').exists()
     
-    def is_validator(self):
-        return self.role == 'validator'
+    def is_validateur(self):
+        return self.groups.filter(name='Validateurs').exists()
+    
+    def is_guest(self):
+        return self.groups.filter(name='Guests').exists()

@@ -14,7 +14,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Accueil</a>
                     </li>
@@ -39,6 +39,16 @@
                         </li>
                     {% endif %}
                 </ul>
+    
+                <!-- Bouton de déconnexion à droite -->
+                {% if user.is_authenticated %}
+                    <ul class="navbar-nav">
+                        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Déconnexion</button>
+                        </form>
+                    </ul>
+                {% endif %}
             </div>
         </div>
     </nav>

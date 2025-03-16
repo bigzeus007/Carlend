@@ -13,6 +13,7 @@ def reservation_list(request):
 
 # Ajouter une réservation
 @login_required
+@permission_required('reservations.add_reservation', raise_exception=True)
 def add_reservation(request):
     if request.method == 'POST':
         form = ReservationForm(request.POST, request.FILES)  # Inclure les fichiers
