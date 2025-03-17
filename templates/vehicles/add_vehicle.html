@@ -65,7 +65,12 @@
                 required
               />
             </div>
-            <input type="hidden" name="fuel_level" id="hidden_fuel_level" />
+            <input
+              type="hidden"
+              name="fuel_level"
+              id="hidden_fuel_level"
+              value="50"
+            />
             <button type="submit" class="btn btn-primary">Ajouter</button>
           </form>
         </div>
@@ -126,9 +131,19 @@
           });
 
         // Enregistrement du niveau de carburant avant soumission
-        document.querySelector("form").addEventListener("submit", function () {
-          document.getElementById("hidden_fuel_level").value =
-            document.getElementById("fuelLevel").value;
+        document.addEventListener("DOMContentLoaded", function () {
+          const fuelLevelInput = document.getElementById("fuelLevel");
+          const hiddenFuelInput = document.getElementById("hidden_fuel_level");
+
+          fuelLevelInput.addEventListener("input", function () {
+            hiddenFuelInput.value = this.value;
+          });
+
+          document
+            .querySelector("form")
+            .addEventListener("submit", function () {
+              hiddenFuelInput.value = fuelLevelInput.value;
+            });
         });
       });
     </script>

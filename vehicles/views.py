@@ -16,15 +16,18 @@ def vehicle_list(request):
 @staff_member_required
 def add_vehicle(request):
     if request.method == 'POST':
+        print("Données POST reçues :", request.POST)  # Debug
         form = VehicleForm(request.POST)
         if form.is_valid():
             vehicle = form.save(commit=False)
-            vehicle.fuel_level = request.POST.get('fuel_level', 50)  # Récupération du niveau de carburant
+            vehicle.fuel_level = int(request.POST.get('fuel_level', 50))  # Conversion en entier
+            print("Niveau de carburant enregistré :", vehicle.fuel_level)  # Debug
             vehicle.save()
-            return redirect('vehicle_list')  # Redirige vers la liste des véhicules
+            return redirect('vehicle_list')  
     else:
         form = VehicleForm()
     return render(request, 'vehicles/add_vehicle.html', {'form': form})
+
 
 @staff_member_required
 def edit_vehicle(request, pk):
@@ -33,7 +36,7 @@ def edit_vehicle(request, pk):
         form = VehicleForm(request.POST, instance=vehicle)
         if form.is_valid():
             vehicle = form.save(commit=False)
-            vehicle.fuel_level = request.POST.get('fuel_level', vehicle.fuel_level)  # Mise à jour du carburant
+            vehicle.fuel_level = int(request.POST.get('fuel_level', vehicle.fuel_level))  # Assure la conversion en entier
             vehicle.save()
             return redirect('vehicle_list')
     else:
