@@ -15,19 +15,28 @@ def vehicle_list(request):
 
 @staff_member_required
 def add_vehicle(request):
+    form = VehicleForm()  # Initialise le formulaire AVANT le test de la méthode
+
     if request.method == 'POST':
-        print("Données POST reçues :", request.POST)  # Debug
+        print("Données POST reçues :", request.POST)  # Debugging
         form = VehicleForm(request.POST)
+
         if form.is_valid():
             vehicle = form.save(commit=False)
-            vehicle.fuel_level = int(request.POST.get('fuel_level', 50))  # Conversion en entier
-            print("Niveau de carburant enregistré :", vehicle.fuel_level)  # Debug
+            vehicle.fuel_level = int(request.POST.get('fuel_level', 50))  # Assure une conversion propre
+            vehicle.availability = request.POST.get('availability', 'disponible')
             vehicle.save()
+            print("Véhicule enregistré avec succès !")
             return redirect('vehicle_list')  
-    else:
-        form = VehicleForm()
+        else:
+            print("Erreurs du formulaire :", form.errors)  # Debugging des erreurs
+
     return render(request, 'vehicles/add_vehicle.html', {'form': form})
 
+@staff_member_required
+def vehicle_detail(request, pk):
+    vehicle = get_object_or_404(Vehicle, pk=pk)
+    return render(request, 'vehicles/vehicle_detail.html', {'vehicle': vehicle})
 
 @staff_member_required
 def edit_vehicle(request, pk):

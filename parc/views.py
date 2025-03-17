@@ -30,6 +30,14 @@ def parc_info(request, pk):
         }
     return render(request, 'parc/parc_info.html', context)
 
+def vehicle_info(request, pk):
+    vehicle = get_object_or_404(Vehicle, pk=pk)
+
+    context = {
+        'vehicle': vehicle,
+        }
+    return render(request, 'parc/vehicle_info.html', context)
+
 def parc_update(request, pk):
     vehicle = get_object_or_404(Vehicle, pk=pk)
     reservation = Reservation.objects.filter(assigned_vehicle=vehicle, is_assigned=True).first()
