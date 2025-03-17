@@ -33,10 +33,10 @@ def add_vehicle(request):
 
     return render(request, 'vehicles/add_vehicle.html', {'form': form})
 
-@staff_member_required
-def vehicle_detail(request, pk):
-    vehicle = get_object_or_404(Vehicle, pk=pk)
-    return render(request, 'vehicles/vehicle_detail.html', {'vehicle': vehicle})
+# @staff_member_required
+# def vehicle_detail(request, pk):
+#     vehicle = get_object_or_404(Vehicle, pk=pk)
+#     return render(request, 'vehicles/vehicle_detail.html', {'vehicle': vehicle})
 
 @staff_member_required
 def edit_vehicle(request, pk):
