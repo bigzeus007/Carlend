@@ -18,19 +18,22 @@
                     </div>
                     
                     <div class="col-md-6">
-                        <label for="creation_date" class="form-label">Date de Réservation :</label>
-                        <input type="text" id="creation_date" class="form-control" value="{{ reservation.reservation_date|date:'d M, Y' }}" readonly>
+                        <label for="creation_date" class="form-label">Date de Création de la Réservation :</label>
+                        <input type="text" id="creation_date" class="form-control" 
+                               value="{{ reservation.created_at|date:'d M, Y' }}" readonly>
                     </div>
                     <div class="col-md-6">
                         <label for="client_name" class="form-label">Nom Client :</label>
-                        <input type="text" id="client_name" name="client_name" class="form-control" value="{{ reservation.client_name }}">
+                        <input type="text" id="client_name" name="client_name" class="form-control" 
+                               value="{{ reservation.client_name }}">
                     </div>
                 </div>
 
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label for="advisor_name" class="form-label">Nom Conseiller de Service :</label>
-                        <input type="text" id="advisor_name" class="form-control" value="{{ reservation.service_advisor }}" readonly>
+                        <input type="text" id="advisor_name" class="form-control" 
+                               value="{{ reservation.service_advisor }}" readonly>
                     </div>
                     <div class="col-md-6">
                         <label for="assigned_vehicle" class="form-label">Immatriculation du Véhicule Affecté :</label>
@@ -54,7 +57,8 @@
                     </div>
                     <div class="col-md-6">
                         <label for="return_date" class="form-label">Date de Retour Prévue :</label>
-                        <input type="date" id="return_date" name="return_date" class="form-control" value="{{ reservation.end_date|date:'Y-m-d' }}">
+                        <input type="date" id="return_date" name="return_date" class="form-control"
+                               value="{{ calculated_return_date }}">
                     </div>
                 </div>
 
@@ -65,7 +69,7 @@
                     </div>
                 </div>
 
-                            <!-- Ajout des champs de fichiers -->
+                <!-- Ajout des champs de fichiers -->
                 <div class="row mb-4">
                     <h4>Documents d'Identité</h4>
                     <div class="col-md-6">
@@ -83,6 +87,7 @@
                         <input type="file" id="driving_license_back" name="driving_license_back" class="form-control">
                     </div>
                 </div>
+
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label for="id_card_front" class="form-label">Carte d'identité (recto) :</label>
@@ -93,7 +98,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="id_card_back" class="form-label">Carte d'identité (verso) :</label>
-                        {% if reservation.id_card_front %}
+                        {% if reservation.id_card_back %}
                         <a href="{{ reservation.id_card_back.url }}" target="_blank">Voir le document existant</a><br>
                         {% endif %}
                         <input type="file" id="id_card_back" name="id_card_back" class="form-control">
@@ -102,8 +107,9 @@
 
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <label for="delivery_date" class="form-label">Date de Livraison :</label>
-                        <input type="date" id="delivery_date" name="delivery_date" class="form-control" value="{{ reservation.start_date|date:'Y-m-d' }}">
+                        <label for="delivery_date" class="form-label">Date de Livraison Convenue :</label>
+                        <input type="date" id="delivery_date" name="delivery_date" class="form-control" 
+                               value="{{ reservation.reservation_date|date:'Y-m-d' }}">
                     </div>
                 </div>
 
@@ -118,7 +124,7 @@
                     {% endif %}
                     {% if vehicle.availability == "indisponible" %}
                     <div class="col-md-4">
-                        <button type="submit" name="action" value="confirm_return" class="btn btn-info w-100">Confirmer Retour</button>
+                        <a href="{% url 'confirm_return_update' vehicle.id %}" class="btn btn-info w-100">Confirmer Retour</a>
                     </div>
                     {% endif %}
                     <div class="col-md-4">

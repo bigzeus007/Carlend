@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseForbidden, HttpResponse
+from django.http import HttpResponseForbidden, HttpResponse, JsonResponse
 from django.contrib import messages
 from reservations.models import Reservation
 from vehicles.models import Vehicle
-from datetime import datetime
+from datetime import datetime, timedelta
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import io
@@ -45,6 +45,11 @@ def parc_update(request, pk):
 
     if not reservation:
         return HttpResponse("Aucune réservation associée ou vous n'êtes pas le responsable de cette réservation.")
+    
+    if reservation.reservation_date and reservation.reservation_duration:
+        calculated_return_date = reservation.reservation_date + timedelta(days=reservation.reservation_duration)
+    else:
+        calculated_return_date = reservation.end_date  # Valeur par défaut
 
     if request.method == 'POST':
         action = request.POST.get('action')  # Bouton cliqué
@@ -150,10 +155,43 @@ def parc_update(request, pk):
         'vehicle': vehicle,
         'reservation': reservation,
         'available_vehicles': available_vehicles,
+        'calculated_return_date': calculated_return_date.strftime('%Y-%m-%d') if calculated_return_date else "",
     }
     return render(request, 'parc/parc_update.html', context)
 
+def confirm_return_update(request, pk):
+    vehicle = get_object_or_404(Vehicle, pk=pk)
+    reservation = Reservation.objects.filter(assigned_vehicle=vehicle, is_assigned=True).first()
 
+    if not reservation:
+        return HttpResponse("Aucune réservation associée pour ce véhicule.")
+
+    if request.method == 'POST':
+        # Récupération des données du formulaire
+        new_mileage = int(request.POST.get('mileage', vehicle.mileage))
+        new_fuel_level = int(request.POST.get('fuel_level', vehicle.fuel_level))
+
+        # Vérification que le nouveau kilométrage est valide
+        if new_mileage < vehicle.mileage:
+            messages.error(request, "Le nouveau kilométrage ne peut pas être inférieur à l'ancien.")
+            return render(request, 'parc/confirm_return_update.html', {'vehicle': vehicle})
+
+        # Mise à jour des informations du véhicule
+        vehicle.mileage = new_mileage
+        vehicle.fuel_level = new_fuel_level
+        vehicle.availability = "disponible"
+        vehicle.save()
+
+        # Mise à jour de la réservation
+        reservation.end_date = datetime.now()
+        reservation.is_assigned = False
+        reservation.is_active = False
+        reservation.save()
+
+        messages.success(request, "Retour confirmé avec mise à jour des données.")
+        return redirect('parc_list')
+
+    return render(request, 'parc/confirm_return_update.html', {'vehicle': vehicle})
 
 
 def update_vehicle_status(request, pk):

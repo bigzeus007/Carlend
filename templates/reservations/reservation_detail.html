@@ -22,6 +22,14 @@
             <td>{{ reservation.client_name }}</td>
         </tr>
         <tr>
+            <th>Plaque :</th>
+            <td>{{ reservation.client_license_plate|default:"Non spécifiée" }}</td>
+        </tr>
+        <tr>
+            <th>Mise en circulation :</th>
+            <td>{{ reservation.client_vehicle_date|default:"Non spécifiée" }}</td>
+        </tr>
+        <tr>
             <th>Criticité :</th>
             <td>{{ reservation.get_criticality_display }}</td>
         </tr>
@@ -31,11 +39,19 @@
         </tr>
         <tr>
             <th>Durée :</th>
-            <td>{{ reservation.reservation_duration }} jours</td>
+            <td>{{ reservation.reservation_duration|default:"Non spécifiée" }} jours</td>
+        </tr>
+        <tr>
+            <th>Nom Commercial :</th>
+            <td>{{ reservation.commercial_advisor|default:"Non spécifié" }}</td>
+        </tr>
+        <tr>
+            <th>Nom Conseiller de service :</th>
+            <td>{{ reservation.service_advisor|default:"Non spécifié" }}</td>
         </tr>
         <tr>
             <th>Raisons :</th>
-            <td>{{ reservation.reasons }}</td>
+            <td>{{ reservation.reasons|default:"Non spécifiées" }}</td>
         </tr>
         <tr>
             <th>Véhicule Assigné :</th>

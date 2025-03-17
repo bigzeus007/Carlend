@@ -107,18 +107,18 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         var opts = {
-          angle: 0, // Jauge semi-circulaire
-          lineWidth: 0.2, // Épaisseur
+          angle: 0,
+          lineWidth: 0.2,
           radiusScale: 1,
           pointer: {
-            length: 0.6, // Longueur de l'aiguille
+            length: 0.6,
             strokeWidth: 0.035,
             color: "#000000",
           },
           limitMax: false,
           limitMin: false,
-          colorStart: "#00b300", // Début vert
-          colorStop: "#ff0000", // Fin rouge
+          colorStart: "#00b300",
+          colorStop: "#ff0000",
           strokeColor: "#E0E0E0",
           generateGradient: true,
         };
@@ -128,7 +128,12 @@
         gauge.maxValue = 100;
         gauge.setMinValue(0);
         gauge.animationSpeed = 10;
-        gauge.set(50); // Valeur initiale
+
+        // Initialiser avec la valeur par défaut du slider
+        let initialFuelValue = document.getElementById("fuelLevel").value;
+        gauge.set(initialFuelValue);
+        document.getElementById("fuelValue").textContent = initialFuelValue;
+        document.getElementById("hidden_fuel_level").value = initialFuelValue;
 
         // Mise à jour de la jauge avec le slider
         document
@@ -136,24 +141,9 @@
           .addEventListener("input", function () {
             let value = parseInt(this.value);
             document.getElementById("fuelValue").textContent = value;
-            gauge.set(value); // Met à jour la jauge
+            gauge.set(value);
+            document.getElementById("hidden_fuel_level").value = value; // Met à jour l'input caché
           });
-
-        // Enregistrement du niveau de carburant avant soumission
-        document.addEventListener("DOMContentLoaded", function () {
-          const fuelLevelInput = document.getElementById("fuelLevel");
-          const hiddenFuelInput = document.getElementById("hidden_fuel_level");
-
-          fuelLevelInput.addEventListener("input", function () {
-            hiddenFuelInput.value = this.value;
-          });
-
-          document
-            .querySelector("form")
-            .addEventListener("submit", function () {
-              hiddenFuelInput.value = fuelLevelInput.value;
-            });
-        });
       });
     </script>
   </body>

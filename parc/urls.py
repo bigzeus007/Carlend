@@ -7,4 +7,6 @@ urlpatterns = [
     path('<int:pk>/detail/', views.vehicle_info, name='vehicle_info'),
     path('<int:pk>/update-status/', views.parc_update, name='parc_update'),
     path('<int:pk>/contrat/', views.generate_contract, name='generate_contract'),
+    path('<int:pk>/confirm-return/', views.confirm_return_update, name='confirm_return_update'),
+
 ]
