@@ -13,27 +13,34 @@ def vehicle_list(request):
     vehicles = Vehicle.objects.all()
     return render(request, 'vehicles/vehicle_list.html', {'vehicles': vehicles})
 
+@staff_member_required
 def add_vehicle(request):
     if request.method == 'POST':
         form = VehicleForm(request.POST)
         if form.is_valid():
-            form.save()
+            vehicle = form.save(commit=False)
+            vehicle.fuel_level = request.POST.get('fuel_level', 50)  # Récupération du niveau de carburant
+            vehicle.save()
             return redirect('vehicle_list')  # Redirige vers la liste des véhicules
     else:
         form = VehicleForm()
     return render(request, 'vehicles/add_vehicle.html', {'form': form})
 
+@staff_member_required
 def edit_vehicle(request, pk):
     vehicle = get_object_or_404(Vehicle, pk=pk)
     if request.method == 'POST':
         form = VehicleForm(request.POST, instance=vehicle)
         if form.is_valid():
-            form.save()
+            vehicle = form.save(commit=False)
+            vehicle.fuel_level = request.POST.get('fuel_level', vehicle.fuel_level)  # Mise à jour du carburant
+            vehicle.save()
             return redirect('vehicle_list')
     else:
         form = VehicleForm(instance=vehicle)
     return render(request, 'vehicles/edit_vehicle.html', {'form': form})
 
+@staff_member_required
 def delete_vehicle(request, pk):
     vehicle = get_object_or_404(Vehicle, pk=pk)
     vehicle.delete()
