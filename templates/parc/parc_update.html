@@ -127,9 +127,11 @@
                         <a href="{% url 'confirm_return_update' vehicle.id %}" class="btn btn-info w-100">Confirmer Retour</a>
                     </div>
                     {% endif %}
+                    {% if vehicle.availability != "indisponible" %}
                     <div class="col-md-4">
                         <button type="submit" name="action" value="cancel_reservation" class="btn btn-danger w-100">Annuler Réservation</button>
                     </div>
+                    {% endif %}
                 </div>
             </form>
         </div>

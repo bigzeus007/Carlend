@@ -15,6 +15,7 @@ import os
 import dj_database_url
 
 
+
 env = Env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 # reading .env file
@@ -205,10 +206,14 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Assurez-vous que ce répertoire existe
 
+import mimetypes
+mimetypes.add_type("font/woff", ".woff", True)
+mimetypes.add_type("font/woff2", ".woff2", True)
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 #DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
